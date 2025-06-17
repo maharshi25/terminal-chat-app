@@ -1,5 +1,3 @@
------
-
 # Terminal Chat App
 
 -----
@@ -85,4 +83,3 @@ You'll need a separate server project that includes the backend logic.
     ```bash
     npm start
     ```
------
