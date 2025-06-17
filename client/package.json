@@ -1,0 +1,31 @@
+{
+  "name": "terminal-chat-app",
+  "version": "2.0.0",
+  "description": "A chat app that allows users to join public chat rooms and chat from the command-line and also allows for user to create new chat room",
+  "main": "index.js",
+  "preferGlobal": true,
+  "bin": "./commander.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "terminal",
+    "command-line",
+    "chat app",
+    "socket.io-client"
+  ],
+  "author": "Maharshi Shukla",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "commander": "^10.0.1",
+    "inquirer": "^8.2.5",
+    "socket.io-client": "^4.6.1"
+  },
+  "devDependencies": {
+    "jest": "^29.5.0",
+    "mongodb-memory-server": "^8.12.2",
+    "nodemon": "^2.0.22",
+    "supertest": "^6.3.3"
+  }
+}

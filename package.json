@@ -1,0 +1,13 @@
+{
+  "name": "terminal-chat-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start-server": "node server/server.js",
+    "watch-server": "nodemon server/server.js",
+    "test-server": "npm test --prefix server"
+  },
+  "keywords": [],
+  "author": ""
+}
