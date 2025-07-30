@@ -1,24 +1,24 @@
-const { prompt } = require('inquirer');
-const axios = require('axios');
+const { prompt } = require("inquirer");
+const axios = require("axios");
 
-const loginUser = require('./loginUser');
+const loginUser = require("./loginUser");
 
 const registerUser = async () => {
   const questions = [
     {
-      type: 'input',
-      name: 'username',
-      message: 'Enter your username:',
+      type: "input",
+      name: "username",
+      message: "Enter your username:",
     },
     {
-      type: 'input',
-      name: 'email',
-      message: 'Enter your email:',
+      type: "input",
+      name: "email",
+      message: "Enter your email:",
     },
     {
-      type: 'password',
-      name: 'password',
-      message: 'Enter your password:',
+      type: "password",
+      name: "password",
+      message: "Enter your password:",
     },
   ];
 
@@ -26,18 +26,18 @@ const registerUser = async () => {
     const answers = await prompt(questions);
     const { username, email, password } = answers;
 
-    const response = await axios.post('https://command-line-chat-app.onrender.com/auth/register', {
+    const response = await axios.post("http://localhost:8080/auth/register", {
       username,
       email,
       password,
     });
 
     console.info(response.data.message); // Registration successful
-    console.info('-----------------------');
+    console.info("-----------------------");
     const token = loginUser(username, password, email);
     return token;
   } catch (error) {
-    if ( error.response.data.message === 'Username or email already exists') {
+    if (error.response.data.message === "Username or email already exists") {
       console.info(error.response.data.message);
       registerUser();
     } else {

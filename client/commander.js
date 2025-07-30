@@ -1,21 +1,22 @@
 #!/usr/bin/env node
-const { Command } = require('commander');
-const io = require('socket.io-client');
+const { Command } = require("commander");
+const io = require("socket.io-client");
 
-const getAuthOption = require('./src/views/getAuthOption');
-const getMenuOption = require('./src/views/getMenuOption');
-const chatMessageInterface = require('./src/views/chatMessageInterface');
-const render = require('./src/views/renderInterface');
-const attachEvents = require('./attachEvents');
+const getAuthOption = require("./src/views/getAuthOption");
+const getMenuOption = require("./src/views/getMenuOption");
+const chatMessageInterface = require("./src/views/chatMessageInterface");
+const render = require("./src/views/renderInterface");
+const attachEvents = require("./attachEvents");
 
 const program = new Command();
 
-program.version('1.0.0').description('Terminal Chat App');
+program.version("1.0.0").description("Terminal Chat App");
 
 // Start Terminal chat app
 program
-  .description('Starts the Terminal chat app')
-  .command('start').action(async () => {
+  .description("Starts the Terminal chat app")
+  .command("start")
+  .action(async () => {
     // Display Authentication menu
     const authOption = await getAuthOption();
 
@@ -23,15 +24,15 @@ program
     const token = await render[authOption]();
 
     if (!token) {
-      console.info('Authentication Error!');
+      console.info("Authentication Error!");
       process.exit(1);
     }
 
     // connect to the socket server after authentication
-    const client = io('https://command-line-chat-app.onrender.com', {
+    const client = io("http://localhost:8080/", {
       auth: {
-        token
-      }
+        token,
+      },
     });
 
     // Attach events to client
@@ -45,12 +46,11 @@ program
 
     // Start chat room messaging
     chatMessageInterface(client, chatRoom);
-  }
-  );
+  });
 
 program.parse(process.argv);
 
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
   process.exit(1);
 });
