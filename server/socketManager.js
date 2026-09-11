@@ -1,6 +1,26 @@
 const jwt = require('jsonwebtoken');
 const User = require('./src/models/user.model');
 
+const MESSAGE_LIMIT = 5;
+const WINDOW_MS = 10_000;
+const userMessageTimestamps = new Map();
+
+const cleanupExpiredEntries = () => {
+    const now = Date.now();
+
+    for (const [userId, timestamps] of userMessageTimestamps) {
+        const activeTimestamps = timestamps.filter((timestamp) => now - timestamp < WINDOW_MS);
+        if (activeTimestamps.length === 0) {
+            userMessageTimestamps.delete(userId);
+        } else {
+            userMessageTimestamps.set(userId, activeTimestamps);
+        }
+    }
+};
+
+const cleanupInterval = setInterval(cleanupExpiredEntries, WINDOW_MS);
+cleanupInterval.unref();
+
 module.exports = (io) => {
     // Authentication middleware
     io.use(async (socket, next) => {
@@ -18,6 +38,7 @@ module.exports = (io) => {
 
             // Attach the user object to the socket
             socket.username = user.username;
+            socket.userId = user._id.toString();
             next();
         } catch (error) {
             console.error('Authentication error', error);
@@ -45,6 +66,21 @@ module.exports = (io) => {
 
         // Handle 'chat message' event when a client sends a message
         socket.on('chat message', (room, message) => {
+            const now = Date.now();
+            const timestamps = (userMessageTimestamps.get(socket.userId) || [])
+                .filter((timestamp) => now - timestamp < WINDOW_MS);
+
+            if (timestamps.length >= MESSAGE_LIMIT) {
+                socket.emit('rate limit', {
+                    message: 'Too many messages. Please wait.',
+                    retryAfterMs: WINDOW_MS - (now - timestamps[0]),
+                });
+                userMessageTimestamps.set(socket.userId, timestamps);
+                return;
+            }
+
+            timestamps.push(now);
+            userMessageTimestamps.set(socket.userId, timestamps);
             socket.broadcast.to(room).emit('chat message', `${socket.username}: ${message}`);
         });
 

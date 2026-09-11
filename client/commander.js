@@ -7,6 +7,7 @@ const getMenuOption = require("./src/views/getMenuOption");
 const chatMessageInterface = require("./src/views/chatMessageInterface");
 const render = require("./src/views/renderInterface");
 const attachEvents = require("./attachEvents");
+const serverUrl = require("./src/config");
 
 const program = new Command();
 
@@ -29,7 +30,7 @@ program
     }
 
     // connect to the socket server after authentication
-    const client = io("http://localhost:8080/", {
+    const client = io(serverUrl, {
       auth: {
         token,
       },
@@ -45,7 +46,7 @@ program
     const chatRoom = await render[homeOption](client);
 
     // Start chat room messaging
-    chatMessageInterface(client, chatRoom);
+    chatMessageInterface(client, chatRoom, token);
   });
 
 program.parse(process.argv);

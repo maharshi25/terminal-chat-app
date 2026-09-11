@@ -15,7 +15,9 @@ const io = ioServer(server, { cors: { origin: "*" } });
 // Manage socket connections
 socketManager(io);
 
-server.listen(8080, async () => {
+const port = process.env.PORT || 8080;
+
+server.listen(port, async () => {
   // Connect to Mongo
   await mongoConnect();
   // connect to redis
