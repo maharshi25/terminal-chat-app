@@ -1,10 +1,11 @@
 const axios = require("axios");
 const { prompt } = require("inquirer");
+const serverUrl = require("../config");
 
 const loginUser = async (username, password, email = null) => {
   if (email) {
     try {
-      const response = await axios.post("http://localhost:8080/auth/login", {
+      const response = await axios.post(`${serverUrl}/auth/login`, {
         username,
         password,
       });
@@ -34,7 +35,7 @@ const loginUser = async (username, password, email = null) => {
       const answers = await prompt(questions);
       const { username, password } = answers;
 
-      const response = await axios.post("http://localhost:8080/auth/login", {
+      const response = await axios.post(`${serverUrl}/auth/login`, {
         username,
         password,
       });

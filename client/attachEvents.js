@@ -7,6 +7,10 @@ module.exports = (client) => {
       console.info(message);
     });
 
+    client.on('rate limit', (info) => {
+      console.warn(`${info.message} Retry after ${info.retryAfterMs}ms.`);
+    });
+
     client.on('joined', (info) => {
       console.info(info);
     });

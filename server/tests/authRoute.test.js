@@ -3,9 +3,9 @@ const mongoose = require('mongoose');
 const { MongoMemoryServer } = require('mongodb-memory-server');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+process.env.SECRET_KEY = process.env.SECRET_KEY || 'test-secret';
 const app = require('../app');
 const User = require("../src/models/user.model");
-const redisClient = require('../src/utils/redisClient');
 require('dotenv');
 
 
@@ -19,14 +19,12 @@ describe('Auth Routes', () => {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
-    await redisClient.connect();
   });
 
   // Close the database connection after all tests
   afterAll(async () => {
     await mongoose.disconnect();
     await mongoServer.stop();
-    await redisClient.disconnect();
   });
 
   // Define test users
@@ -104,33 +102,4 @@ describe('Auth Routes', () => {
     });
   });
 
-  // Get Token Test
-  describe('GET /token/:id', () => {
-    test('should get a token for the user', async () => {
-      // Create a test user
-      const hashedPassword = await bcrypt.hash(testUser.password, 10);
-      const newUser = new User({
-        username: testUser.username,
-        email: testUser.email,
-        password: hashedPassword,
-      });
-      await newUser.save();
-
-      // Generate a JWT
-      const token = jwt.sign({ userId }, process.env.SECRET_KEY);
-      await redisClient.set(testUser2.username, token);
-
-      const response = await request(app).get(`/auth/tokens/${testUser2.username}`);
-
-      expect(response.statusCode).toBe(200);
-      expect(response.body).toBe(token);
-    });
-
-    test('should return an error if no token found', async () => {
-      const response = await request(app).get('/auth/tokens/nonexistentuser');
-
-      expect(response.statusCode).toBe(400);
-      expect(response.body.message).toBe('No token found');
-    });
-  });
 });

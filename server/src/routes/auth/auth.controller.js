@@ -1,7 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require("../../models/user.model");
-const redisClient = require('../../utils/redisClient');
 
 // User Registration
 async function registerUser(req, res) {
@@ -51,7 +50,6 @@ async function loginUser(req, res) {
 
     // Generate a JWT
     const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY);
-    await redisClient.set(username, token);
 
     res.json({ token, message: 'Login successful' });
   } catch (error) {
@@ -60,23 +58,7 @@ async function loginUser(req, res) {
   }
 }
 
-async function getToken(req, res) {
-  try {
-    const username = req.params.id;
-    const token = await redisClient.get(username);
-    if (token) {
-      res.status(200).json(token);
-    } else {
-      res.status(400).json({ message: 'No token found' })
-    }
-  } catch (error) {
-    res.status(500).json({ message: 'Couldn\'t get token' });
-  }
-
-}
-
 module.exports = {
   registerUser,
-  loginUser,
-  getToken
+  loginUser
 }

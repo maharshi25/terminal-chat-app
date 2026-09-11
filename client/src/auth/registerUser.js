@@ -2,6 +2,7 @@ const { prompt } = require("inquirer");
 const axios = require("axios");
 
 const loginUser = require("./loginUser");
+const serverUrl = require("../config");
 
 const registerUser = async () => {
   const questions = [
@@ -26,7 +27,7 @@ const registerUser = async () => {
     const answers = await prompt(questions);
     const { username, email, password } = answers;
 
-    const response = await axios.post("http://localhost:8080/auth/register", {
+    const response = await axios.post(`${serverUrl}/auth/register`, {
       username,
       email,
       password,

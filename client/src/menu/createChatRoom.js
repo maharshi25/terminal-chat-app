@@ -1,6 +1,7 @@
 const { prompt } = require("inquirer");
 const joinChatRoom = require("./joinChatRoom");
 const axios = require("axios");
+const serverUrl = require("../config");
 const question = [
   {
     type: "input",
@@ -14,7 +15,7 @@ module.exports = async function createChatRoom(client) {
     const answer = await prompt(question);
     const roomName = answer.roomName;
 
-    const response = await axios.post("http://localhost:8080/api/chatrooms", {
+    const response = await axios.post(`${serverUrl}/api/chatrooms`, {
       roomName,
     });
     const chatRoom = response.data;

@@ -1,11 +1,12 @@
 const { prompt } = require("inquirer");
 const axios = require("axios");
+const serverUrl = require("../config");
 
 module.exports = async function joinChatRoom(client, chatRoom = null) {
   if (chatRoom) {
     client.emit("join", chatRoom);
   } else {
-    const response = await axios.get("http://localhost:8080/api/chatrooms");
+    const response = await axios.get(`${serverUrl}/api/chatrooms`);
     const chatRooms = response.data;
     const chatRoomsOption = [
       {
